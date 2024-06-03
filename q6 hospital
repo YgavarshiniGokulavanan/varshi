@@ -1,0 +1,58 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class App {
+    public static void main(String[] args) {
+        System.setProperty("webdriver.chrome.driver", "D:\\testing practice\\practice\\qone\\src\\driver\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+        try {
+            driver.get("https://www.psghospitals.com/book-an-appointment/");
+            driver.manage().window().maximize();
+            //Thread.sleep(2000); // Wait for 2 seconds to ensure the page loads
+
+            WebElement doc = driver.findElement(By.xpath("/html/body/div[2]/div[4]/section[3]/div/div/div[2]/div[1]/div[2]"));
+            doc.click();
+            Thread.sleep(2000); // Wait for 2 seconds to ensure the next element is visible
+
+            WebElement appointment = driver.findElement(By.xpath("/html/body/div[7]/div/div/div/div/div/div/div/div/div[2]/div/div[2]/ul/li[1]/a"));
+            appointment.click();
+            Thread.sleep(2000); // Wait for 2 seconds to ensure the appointment form loads
+
+            WebElement name = driver.findElement(By.name("PatientName"));
+            WebElement mail = driver.findElement(By.name("Email"));
+            WebElement mobno = driver.findElement(By.name("Mobile"));
+            WebElement date = driver.findElement(By.name("Preferreddate"));
+            WebElement patient = driver.findElement(By.xpath("/html/body/div[7]/div/div/div/div/div/div/div/form/ul/li[6]/div/p/span/span/span[1]/label/span"));
+            WebElement others = driver.findElement(By.name("OtherDetails"));
+
+            name.sendKeys("vishmaya");
+            Thread.sleep(1000); // Wait for 1 second between entering details
+
+            mail.sendKeys("727822tuit256@skct.edu.in");
+            Thread.sleep(1000); // Wait for 1 second between entering details
+
+            mobno.sendKeys("7598984066");
+            Thread.sleep(1000); // Wait for 1 second between entering details
+
+            date.sendKeys("19-07-2024");
+            Thread.sleep(1000); // Wait for 1 second between entering details
+
+            others.sendKeys("nil");
+            Thread.sleep(1000); // Wait for 1 second between entering details
+
+            if (!patient.isSelected()) {
+                patient.click();
+            }
+            Thread.sleep(1000); // Wait for 1 second after selecting patient
+
+            WebElement submit = driver.findElement(By.xpath("//*[@id=\"wpcf7-f2283-o1\"]/form/ul/li[10]/p/input"));
+            submit.click();
+            Thread.sleep(2000); // Wait for 2 seconds to ensure form submission
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            driver.quit();
+        }
+    }
+}
