@@ -1,0 +1,513 @@
+EXPERIMENT 1: Advanced Employee Management System: JDBC Connectivity and CRUD
+Operations
+CODE:import java.sql.*;
+import java.util.Scanner;
+public class App {
+public static void main(String[] args) throws Exception {
+System.out.println("Press 1 to create table. ");
+System.out.println("Press 2 to insert the data. ");
+System.out.println("Press 3 to update the data. ");
+System.out.println("Press 4 to delete the data. ");
+System.out.println("Press 5 to read the data. ");
+Scanner s = new Scanner(System.in);
+int n = s.nextInt();
+DatabaseConnection dbc = new DatabaseConnection();
+while(n!=0)
+{
+switch (n) {
+case 1:
+dbc.createTable();
+break;
+case 2:
+dbc.insertData();
+break;
+case 3:
+dbc.updateData();
+break;
+case 4:
+dbc.deleteData();
+break;
+case 5:
+dbc.readData();
+break;
+default:
+System.out.println("Invalid choice.");
+break;
+}
+}
+dbc.closeConnection();
+}
+static class DatabaseConnection {
+private String url = "jdbc:mysql://localhost:3306/bms";
+private String username = "root";
+private String password = "root";
+private Connection con;
+public DatabaseConnection() throws SQLException {
+this.con = DriverManager.getConnection(url, username, password);
+}
+public void closeConnection() throws SQLException {
+if (con != null && !con.isClosed()) {
+con.close();
+}
+}
+public void createTable() throws SQLException {
+String query = "create table passenger(pid int primary key, pname varchar(20),address
+varchar(150),sourcepoint varchar(30),destination varchar(20) ,phoneno varchar(11));";
+Statement st = con.createStatement();
+st.executeUpdate(query);
+System.out.println("Table created.. ");
+st.close();
+}
+public void readData() throws SQLException {
+String query = "select * from passenger";
+Statement st = con.createStatement();
+ResultSet rt = st.executeQuery(query);
+while (rt.next()) {
+System.out.println("Id: " + rt.getInt(1));
+System.out.println("Name: " + rt.getString(2));
+System.out.println("Address: " + rt.getString(3));
+System.out.println("Source: " + rt.getString(4));
+System.out.println("Destination: " + rt.getString(5));
+System.out.println("Phone no: " + rt.getString(6));
+}
+System.out.println("Read completed .... ");
+st.close();
+}
+public void insertData() throws SQLException {
+String query = "insert into passenger values (2,'abi','10/20k
+sitra','coimbatore','nagai','84578902');";
+Statement st = con.createStatement();
+int row = st.executeUpdate(query);
+System.out.println("Number of rows affected: " + row);
+st.close();
+}
+public void updateData() throws SQLException {
+int id = 2;
+String name = "tamil";
+String address= " mgr nagar";
+String source = "cbm";
+String destination = "trichy";
+String phone = "3459453220";
+String query = "update passenger set pname=?, address=?, sourcepoint=?, destination=?,
+phoneno =? where pid=?";
+PreparedStatement pst = con.prepareStatement(query);
+pst.setString(1, name);
+pst.setString(2, address);
+pst.setString(3, source);
+pst.setString(4, destination);
+pst.setString(5, phone);
+pst.setInt(6, id);
+int row = pst.executeUpdate();
+System.out.println("Number of rows updated: " + row);
+pst.close();
+}
+public void deleteData() throws SQLException {
+int idToDelete = 2;
+String query = "delete from passenger where pid=?";
+PreparedStatement pst = con.prepareStatement(query);
+pst.setInt(1, idToDelete);
+int row = pst.executeUpdate();
+System.out.println("Number of rows deleted: " + row);
+pst.close();
+}
+}
+}
+OUTPUT:
+
+EXPERIMENT 2: Integrated Vehicle Management Solution: JDBC Connectivity and CRUD
+Operations
+CODE:
+import java.util.*;
+import java.sql.*;
+public class exp_2 {
+public static void createTable() throws Exception {
+Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vehiclemanagement",
+"root", "My-Sql123");
+Statement st = con.createStatement();
+String query = "CREATE TABLE Vehicle (" +
+"id INT PRIMARY KEY, " +
+"make VARCHAR(100), " +
+"model VARCHAR(100), " +
+"year INT, " +
+"price DECIMAL(10, 2)" +
+")";
+int rs = st.executeUpdate(query);
+System.out.println(rs+"Table created successfully!");
+}
+public static void readData() throws Exception {
+Connection con =
+DriverManager.getConnection("jdbc:mysql://localhost:3306/vehiclemanagement", "root", "MySql123");
+Statement st = con.createStatement();
+String query = "SELECT * FROM Vehicle";
+ResultSet rs = st.executeQuery(query);
+while (rs.next()) {
+System.out.println("ID: " + rs.getInt("id"));
+System.out.println("Make: " + rs.getString("make"));
+System.out.println("Model: " + rs.getString("model"));
+System.out.println("Year: " + rs.getInt("year"));
+System.out.println("Price: $" + rs.getDouble("price"));
+System.out.println(" ------------------ ");
+}
+}
+public static void insertData() throws Exception {
+Scanner sc = new Scanner(System.in);
+Connection con =
+DriverManager.getConnection("jdbc:mysql://localhost:3306/vehiclemanagement", "root", "MySql123");
+String query = "INSERT INTO Vehicle (id, make, model, year, price) VALUES (?, ?, ?, ?, ?)";
+PreparedStatement pst = con.prepareStatement(query);
+System.out.println("Enter Vehicle ID: ");
+pst.setInt(1, sc.nextInt());
+System.out.println("Enter Make: ");
+pst.setString(2, sc.next());
+System.out.println("Enter Model: ");
+pst.setString(3, sc.next());
+System.out.println("Enter Year: ");
+pst.setInt(4, sc.nextInt());
+System.out.println("Enter Price: ");
+pst.setDouble(5, sc.nextDouble());
+int rs = pst.executeUpdate();
+System.out.println("Vehicle inserted successfully!");
+}
+public static void updateData() throws Exception {
+Scanner sc = new Scanner(System.in);
+Connection con =
+DriverManager.getConnection("jdbc:mysql://localhost:3306/vehiclemanagement", "root", "MySql123");
+String query = "UPDATE Vehicle SET make = ?, model = ?, year = ?, price = ? WHERE id = ?";
+PreparedStatement pst = con.prepareStatement(query);
+System.out.println("Enter Vehicle ID to update: ");
+int id = sc.nextInt();
+System.out.println("Enter new Make: ");
+pst.setString(1, sc.next());
+System.out.println("Enter new Model: ");
+pst.setString(2, sc.next());
+System.out.println("Enter new Year: ");
+pst.setInt(3, sc.nextInt());
+System.out.println("Enter new Price: ");
+pst.setDouble(4, sc.nextDouble());
+pst.setInt(5, id);
+int rs = pst.executeUpdate();
+System.out.println("Vehicle updated successfully!");
+}
+public static void deleteData() throws Exception {
+Scanner sc = new Scanner(System.in);
+Connection con =
+DriverManager.getConnection("jdbc:mysql://localhost:3306/vehiclemanagement", "root", "MySql123");
+String query = "DELETE FROM Vehicle WHERE id = ?";
+PreparedStatement pst = con.prepareStatement(query);
+System.out.println("Enter Vehicle ID to delete: ");
+int id = sc.nextInt();
+pst.setInt(1, id);
+int rs = pst.executeUpdate();
+System.out.println("Vehicle deleted successfully!");
+}
+}
+Main class:
+import java.util.Scanner;
+public class exp_2_fc {
+public static void main(String[] args) throws Exception {
+exp_2 obj = new exp_2();
+Scanner sc = new Scanner(System.in);
+System.out.println("Enter the Input: ");
+int n = sc.nextInt();
+if(n == 1)
+{
+obj.createTable();
+}
+else if(n == 2)
+{
+obj.insertData();
+}
+else if(n == 3)
+{
+obj.readData();
+}
+else if(n == 4)
+{
+obj.updateData();
+}
+else if(n==5)
+{
+obj.deleteData();
+}
+else
+{
+System.out.println("Invalid input");
+}
+}
+}
+OUTPUT:
+Insert:
+EXPERIMENT 3: Sign up Page Testing for Selenium Project
+CODE:
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+public class App {
+public static void main(String[] args) throws Exception {
+System.setProperty("webdriver.chrome.driver",
+"C:\\Users\\abish\\OneDrive\\Desktop\\Testing\\facebook\\facebook\\src\\driver\\chromedriver.exe")
+;
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.facebook.com/signup");
+driver.manage().window().maximize();
+// findElement is the function
+WebElement firstName = driver.findElement(By.name("firstname"));
+WebElement SurName = driver.findElement(By.name("lastname"));
+WebElement MobileNumberoremailpassword = driver.findElement(By.name("reg_email "));
+WebElement Newpassword = driver.findElement(By.name("reg_passwd "));
+WebElement Day = driver.findElement(By.name("birthday_day"));
+WebElement Month = driver.findElement(By.name("birthday_month"));
+WebElement Year = driver.findElement(By.name("birthday_year"));
+WebElement gender = driver.findElement(By.xpath("//input[@value='2']"));
+WebElement Button = driver.findElement(By.name("websubmit"));
+firstName.sendKeys("johncena");
+SurName.sendKeys("john123");
+MobileNumberoremailpassword.sendKeys("9999999999");
+Newpassword.sendKeys("skct123");
+Day.sendKeys("10");
+Month.sendKeys("Jan");
+Year.sendKeys("2003");
+if (!gender.isSelected()) {
+gender.click();
+}
+Button.click();
+Thread.sleep(50000);
+driver.quit();
+}
+}
+OUTPUT:
+EXPRIMENT 4: Using Selenium Locators in Test Automation
+CODE:
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+public class App {
+public static void main(String[] args) throws InterruptedException {
+System.setProperty("webdriver.chrome.driver",
+"D:\\ORACLE\\Industry Classes\\SEM IV\\TESTING
+METHODOLOGIES\\PROJECT\\LinkedIn_1\\src\\chromedriver.exe");
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_navheader-signin");
+driver.manage().window().maximize();
+WebElement email = driver.findElement(By.name("session_key"));
+WebElement password = driver.findElement(By.name("session_password"));
+WebElement button = driver.findElement(By.xpath("//button[@type='submit']"));
+email.sendKeys(" ");
+password.sendKeys("***********");
+button.click();
+// System.out.println(driver.getTitle());
+// System.out.println(driver.getClass())
+Thread.sleep(10000);
+WebElement search = driver.findElement(By.className("search-global-typeahead__input"));
+search.sendKeys("amypo technologies private limited");
+search.sendKeys(Keys.RETURN);
+Thread.sleep(10000);
+WebElement amypo = driver.findElement(By.xpath("//*[@id=\"ember256\"]"));
+amypo.click();
+// driver.quit();
+}
+}
+OUTPUT:
+EXPERIMENT 5: Handling Delays in Locating Elements
+CODE:
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+public class App {
+private static WebDriver driver;
+private static String baseUrl = "https://www.linkedin.com/login";
+public static void main(String[] args) throws Exception {
+System.setProperty("webdriver.chrome.driver",
+"C:\\Users\\vinod\\Documents\\College Stuff\\Sem 4\\Testing
+Methodologies\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe");
+// Initialize ChromeDriver instance
+driver = new ChromeDriver();
+driver.get(baseUrl);
+driver.manage().window().maximize();
+WebElement emailField = driver.findElement(By.id("username"));
+emailField.sendKeys("yourname@email.com");
+WebElement passwordField = driver.findElement(By.id("password"));
+passwordField.sendKeys("yourpassword");
+WebElement signInButton = driver.findElement(By.xpath("//button[@type='submit']"));
+signInButton.click();
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+WebElement search = wait
+.until(ExpectedConditions.elementToBeClickable(
+By.xpath("//*[@id=\"global-nav-typeahead\"]/input")));
+search.sendKeys("amypo technologies private limited");
+search.sendKeys(Keys.RETURN);
+WebElement follow = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+"/html/body/div[5]/div[3]/div[2]/div/div[1]/main/div/div/div[2]/div/ul/li/div/a/div/div[2]/div[1]/div/but
+ton")));
+follow.click();
+Thread.sleep(60000);
+driver.quit();
+}
+}
+OUTPUT:
+
+EXPERIMENT 07 : TESTING MOUSE AND KEYBOARD EVENTS IN WEB APPLICATIONS
+PROGRAM :
+import java.Ɵme.DuraƟon;
+import org.openqa.selenium.*;
+public class App {
+ public staƟc void main(String[] args) throws ExcepƟon {
+ System.out.println("Flipkart Mouse Handling :");
+ System.setProperty("webdriver.chrome.driver",
+ "C: \\src\\driver\\chromedriver.exe");
+ WebDriver driver = new ChromeDriver();
+ driver.manage().window().maximize()
+ driver.get("hƩps://flipkart.com");
+ WebDriverWait wait = new WebDriverWait(driver, DuraƟon.ofSeconds(40));
+ WebElement srch = wait.unƟl(ExpectedCondiƟons.elementToBeClickable(By.xpath(
+ "//*[@id=\"container\"]/div/div[1]/div/div/div/div/div[1]/div/div[1]/div/div[1]/div[1]/head
+er/div[1]/div[2]/form/div/div/input")));
+ srch.sendKeys("phone");
+ srch.sendKeys(Keys.ENTER);
+ WebElement more = wait.unƟl(ExpectedCondiƟons
+ .elementToBeClickable(By.xpath("//*[@id=\"container\"]/div/div[1]/div[1]/div[2]/div[5]")));
+ more.click();
+ more.click();
+ WebElement c = driver
+ .findElement(By.xpath("//*[@id=\"container\"]/div/div[1]/div[1]/div[2]/div[5]/div/div/div[2
+]/div[2]"));
+ WebElement d = driver.findElement(By
+ .xpath("//*[@id=\"container\"]/div/div[1]/div[1]/div[2]/div[5]/div/div/div[2]/div[2]/div/ul/li
+[2]/a"));
+ AcƟons acƟon = new AcƟons(driver);
+ acƟon.moveToElement(c).perform();
+ acƟon.moveToElement(d).click().build().perform();
+ Thread.sleep(5000);
+ driver.quit();
+ }
+}
+OUTPUT :
+
+EXPR 8:
+import java.Ɵme.DuraƟon;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interacƟons.AcƟons;
+import org.openqa.selenium.support.ui.ExpectedCondiƟons;
+import org.openqa.selenium.support.ui.WebDriverWait;
+public class App {
+ public staƟc void main(String args[]) throws InterruptedExcepƟon {
+ System.setProperty("webdriver.chrome.driver",
+"C:\\Users\\Desktop\\TESTING\\Projects\\QuesƟon8\\src\\driver\\chromedriver.exe");
+ WebDriver driver = new ChromeDriver();
+ driver.get("hƩps://www.flipkart.com");
+ driver.manage().window().maximize();
+ WebElement searchBox =
+driver.findElement(By.xpath("//*[@id=\"container\"]/div/div[1]/div/div/div/div/div[1]/div/div[1]/div/div[1]/
+div[1]/header/div[1]/div[2]/form/div/div/input"));
+ searchBox.sendKeys("Headphones");
+ AcƟons acƟon = new AcƟons(driver);
+ acƟon.sendKeys(Keys.ENTER).perform();
+ Thread.sleep(5000);
+ WebDriverWait wait = new WebDriverWait(driver, DuraƟon.ofSeconds(20));
+ WebElement searchResult =
+wait.unƟl(ExpectedCondiƟons.elementToBeClickable(By.xpath("//*[@id=\"container\"]/div/div[3]/div[1]/di
+v[2]/div[2]/div/div[1]/div/a[1]/div[1]/div/div/img")));
+ searchResult.click();
+ WebElement buyNowBuƩon = wait.unƟl(ExpectedCondiƟons.elementToBeClickable(By.className("abuƩon-input")));
+ buyNowBuƩon.click();
+ WebElement apply =
+wait.unƟl(ExpectedCondiƟons.elementToBeClickable(By.xpath("//*[@id=\"container\"]/div/div[3]/div[1]/di
+v[2]/div[2]/div/div[1]/div/a[2]")));
+ apply.click();
+ driver.quit();
+ }
+}
+
+
+EXPERIMENT 09: AUTOMATING SHOPPING WEBSITE TESTING WITH SELENIUM WEBDRIVER
+PROGRAM:
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+public class App {
+public static void main(String[] args) throws Exception {
+System.setProperty("webdriver.chrome.driver",
+"C:\\Users\\SEKAR\\Desktop\\TestingMethodologies\\mysql-connector-j8.3.0\\Project\\flipkart\\src\\driver\\chromedriver.exe");
+WebDriver driver = new ChromeDriver();
+driver.get("https://www.flipkart.com/");
+driver.manage().window().maximize();
+WebElement search = driver.findElement(By.xpath("//input[@name='q']"));
+search.sendKeys("soft toys");
+search.submit();
+WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+WebElement item = wait.until(ExpectedConditions.elementToBeClickable(
+By.xpath("//*[@id=\"container\"]/div/div[3]/div[1]/div[2]/div[2]/div/div[3]/div")));
+item.click();
+// Switching to the new window
+for (String handle : driver.getWindowHandles()) {
+driver.switchTo().window(handle);
+}
+// Now driver points to the second window
+WebElement addToCart = driver
+.findElement(By.xpath("//*[@id=\"container\"]/div/div[3]/div[1]/div[1]/div[2]/div/ul/li[1]/button"));
+addToCart.click();
+Thread.sleep(10000);
+driver.quit();
+}
+}
+OUTPUT:
+
+
+EXPERIMENT 10 : ORGANIZATION IN BANKING WEB APPLICATION AUTOMATION WITH SELENIUM
+WEBDRIVER AND TESTNG
+PROGRAM :
+import java.io.*;
+import org.apache.poi.ss.usermodel.*;
+import org.openqa.selenium.*;
+import org.testng.annotations.*;
+public class WebApp {
+WebDriver driver;
+@BeforeMethod
+public void setUp() {
+System.setProperty("webdriver.chrome.driver",
+"C:\\src\\driver\\chromedriver.exe");
+driver = new ChromeDriver();
+driver.get("https://the-internet.herokuapp.com/login");
+try {
+FileInputStream fs = new FileInputStream(
+"C:\\src\\file\\data.xlsx");
+Workbook workbook = WorkbookFactory.create(fs)
+Sheet sheet = workbook.getSheetAt(0);
+Row row = sheet.getRow(1);
+String username = row.getCell(0).getStringCellValue();
+String password = row.getCell(1).getStringCellValue();
+driver.findElement(By.id("username")).sendKeys(username);
+driver.findElement(By.id("password")).sendKeys(password);
+driver.findElement(By.tagName("button")).click();
+workbook.close();
+} catch (IOException e) {
+e.printStackTrace();
+}
+}
+@Test
+public void testLoginSuccess() {
+WebElement succ = driver.findElement(By.cssSelector(".flash.success"));
+}
+@Test
+public void testLoginFailure() {
+WebElement error = driver.findElement(By.cssSelector(".flash.error"));
+}
+}
+OUTPUT :
+
