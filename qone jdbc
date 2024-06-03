@@ -1,0 +1,126 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class Db_Helper {
+
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter 1 to create table, 2 to read data, 3 to insert data, 4 to update data, 5 to delete data:");
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                createTable();
+                break;
+            case 2:
+                readData();
+                break;
+            case 3:
+                System.out.println("Enter ID:");
+                int id = scanner.nextInt();
+                System.out.println("Enter Name:");
+                String name = scanner.next();
+                System.out.println("Enter Mark:");
+                int mark = scanner.nextInt();
+                insertData(id, name, mark);
+                break;
+            case 4:
+                System.out.println("Enter ID of the student to update:");
+                int updateId = scanner.nextInt();
+                System.out.println("Enter new Name:");
+                String updateName = scanner.next();
+                updateData(updateId, updateName);
+                break;
+            case 5:
+                System.out.println("Enter ID of the student to delete:");
+                int deleteId = scanner.nextInt();
+                deleteData(deleteId);
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+        scanner.close();
+    }
+
+    public static void createTable() throws Exception {
+        String url = "jdbc:mysql://localhost:3306/collegemanagement";
+        String username = "root";
+        String password = "varshu@0503";
+        String query = "CREATE TABLE IF NOT EXISTS students (id INT, name VARCHAR(300), mark INT);";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             Statement st = con.createStatement()) {
+            st.executeUpdate(query);
+            System.out.println("Table created successfully.");
+        }
+    }
+
+    public static void readData() throws Exception {
+        String url = "jdbc:mysql://localhost:3306/collegemanagement";
+        String username = "root";
+        String password = "varshu@0503";
+        String query = "SELECT * FROM students";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             Statement st = con.createStatement();
+             ResultSet rt = st.executeQuery(query)) {
+            while (rt.next()) {
+                System.out.println("ID: " + rt.getInt(1));
+                System.out.println("NAME: " + rt.getString(2));
+                System.out.println("MARK: " + rt.getInt(3));
+            }
+        }
+    }
+
+    public static void insertData(int id, String name, int mark) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/collegemanagement";
+        String username = "root";
+        String password = "varshu@0503";
+        String query = "INSERT INTO students VALUES(?, ?, ?)";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, id);
+            pst.setString(2, name);
+            pst.setInt(3, mark);
+            pst.executeUpdate();
+            System.out.println("Data inserted successfully.");
+        }
+    }
+
+    public static void updateData(int id, String name) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/collegemanagement";
+        String username = "root";
+        String password = "varshu@0503";
+        String query = "UPDATE students SET name=? WHERE id=?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setString(1, name);
+            pst.setInt(2, id);
+            pst.executeUpdate();
+            System.out.println("Data updated successfully.");
+        }
+    }
+
+    public static void deleteData(int id) throws Exception {
+        String url = "jdbc:mysql://localhost:3306/collegemanagement";
+        String username = "root";
+        String password = "varshu@0503";
+        String query = "DELETE FROM students WHERE id=?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+            pst.setInt(1, id);
+            pst.executeUpdate();
+            System.out.println("Data deleted successfully.");
+        }
+    }
+}
+
+
+
+
+
+
+
