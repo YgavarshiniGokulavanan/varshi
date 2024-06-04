@@ -1,0 +1,46 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.WebElementToJsonConverter;
+
+public class Linkedin
+{
+    public static void main(String[] args)
+    {
+    System.setProperty("webdriver.chrome.driver","src\\Driver\\chromedriver-win64\\chromedriver.exe");
+    WebDriver driver=new ChromeDriver();
+    driver.get("https://www.psghospitals.com/book-an-appointment/");
+    driver.manage().window().maximize();
+    WebElement doc=driver.findElement((By.xpath("/html/body/div[2]/div[4]/section[3]/div/div/div[2]/div[1]/div[2]")));
+    doc.click();
+    WebElement appointment=driver.findElement(By.xpath("/html/body/div[7]/div/div/div/div/div/div/div/div/div[2]/div/div[2]/ul/li[1]/a"));
+    appointment.click();
+
+    WebElement name=driver.findElement(By.name("PatientName"));
+    WebElement mail=driver.findElement(By.name("Email"));
+    WebElement mobno=driver.findElement(By.name("Mobile"));
+    WebElement date=driver.findElement(By.name("Preferreddate"));
+    WebElement patient=driver.findElement(By.xpath("/html/body/div[7]/div/div/div/div/div/div/div/form/ul/li[6]/div/p/span/span[1]/span[1]/label/span"));
+    // WebElement month=driver.findElement(By.name(""));
+    // WebElement year=driver.findElement(By.name(""));
+    WebElement others=driver.findElement(By.name("OtherDetails"));
+    name.sendKeys("vishmaya");
+    mail.sendKeys("727822tuit256@skct.edu.in");
+    mobno.sendKeys("7598984066");
+    date.sendKeys("19-07-2024");
+    others.sendKeys("nil");
+    patient.sendKeys("New patient");
+    if(!patient.isSelected())
+    {
+        patient.click();
+    }
+    // month.sendKeys("june");
+    // year.sendKeys("2024");
+    WebElement book=driver.findElement(By.xpath("/html/body/div[7]/div/div/div/div/div/div/div/form/ul/li[10]/p/input"));
+    book.click();
+
+
+
+
+
+}
+}

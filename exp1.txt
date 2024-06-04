@@ -1,0 +1,130 @@
+App.java
+
+import java.util.*;
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        // System.out.println("Hello, World!");
+        database ob = new database();
+        Scanner scanner = new Scanner(System.in);
+        int ch = scanner.nextInt();
+        if (ch == 1) {
+            ob.createTable();
+        }
+
+        if (ch == 2) {
+
+            System.out.println("Enter Emp_id:");
+            int emp_id = scanner.nextInt();
+            System.out.println("Enter name:");
+            String name = scanner.next();
+            System.out.println("Enter Salary:");
+            String salary = scanner.next();
+            ob.insertData(emp_id, name, salary);
+        }
+
+        if (ch == 3) {
+            ob.updateData();
+        }
+        if (ch == 4) {
+            ob.deleteData();
+        }
+        if (ch == 5) {
+            ob.readData();
+        }
+
+    }
+}
+
+database.java
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class database {
+    private String url = "jdbc:mysql://localhost:3306/employeemanagementsystem";
+    private String username = "root";
+    private String password = "qwert123";
+    private Scanner scanner = new Scanner(System.in);
+
+    public void createTable() throws Exception {
+        String query = "CREATE TABLE IF NOT EXISTS employee ("
+                + "emp_id INT PRIMARY KEY,"
+                + "name VARCHAR(255),"
+                + "salary VARCHAR(255))";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                Statement st = con.createStatement()) {
+
+            st.executeUpdate(query);
+            System.out.println("Table created successfully");
+        }
+    }
+
+    public void readData() throws Exception {
+        String query = "SELECT * FROM employee";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(query)) {
+
+            while (rs.next()) {
+                System.out.println("emp_id : " + rs.getInt("emp_id"));
+                System.out.println("Name : " + rs.getString("name"));
+                System.out.println("salary : " + rs.getString("salary"));
+                System.out.println("________");
+            }
+        }
+    }
+
+    public void insertData(int emp_id, String name, String salary)
+            throws Exception {
+
+        String query = "INSERT INTO employee VALUES (?, ?, ?)";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                PreparedStatement pst = con.prepareStatement(query)) {
+
+            pst.setInt(1, emp_id);
+            pst.setString(2, name);
+            pst.setString(3, salary);
+
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+
+    public void updateData() throws Exception {
+        System.out.println("Enter emp_id to update:");
+        int emp_id = scanner.nextInt();
+        System.out.println("Enter new name:");
+        String name = scanner.next();
+        String query = "UPDATE employee SET name = ? WHERE emp_id = ?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                PreparedStatement pst = con.prepareStatement(query)) {
+
+            pst.setString(1, name);
+            pst.setInt(2, emp_id);
+
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+
+    public void deleteData() throws Exception {
+        System.out.println("Enter emp_id to delete:");
+        int emp_id = scanner.nextInt();
+        String query = "DELETE FROM employee WHERE emp_id = ?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                PreparedStatement pst = con.prepareStatement(query)) {
+
+            pst.setInt(1, emp_id);
+
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+
+}

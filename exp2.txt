@@ -1,0 +1,145 @@
+App.java
+
+import java.util.*;
+public class App {
+    public static void main(String[] args) throws Exception {
+        // System.out.println("Hello, World!");
+        database ob = new database();
+        Scanner scanner = new Scanner(System.in);
+        int ch = scanner.nextInt();
+        if(ch==1){
+            ob.createTable();
+        }
+        
+        if(ch==2){
+           
+            System.out.println("Enter Bus_id:");
+            int bus_id = scanner.nextInt();
+            System.out.println("Enter name:");
+            String name = scanner.next();
+            System.out.println("Enter address:");
+            String address = scanner.next();
+            System.out.println("Enter phone number:");
+            String phoneNumber = scanner.next();
+            System.out.println("Enter pickup");
+            String pickup = scanner.next();
+            System.out.println("Enter dropping");
+            String droping = scanner.next();
+            ob.insertData(bus_id,name,address,phoneNumber,pickup,droping);
+        }
+        
+        if(ch==3){
+            ob.updateData();
+        }
+        if(ch==4){
+            ob.deleteData();
+        }
+        if(ch==5){
+            ob.readData();
+        }
+        
+
+    }
+}
+
+database.java
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class database {
+    private String url = "jdbc:mysql://localhost:3306/busspass";
+    private String username = "root";
+    private String password = "qwert123";
+    private Scanner scanner = new Scanner(System.in);
+
+    public void createTable() throws Exception {
+        String query = "CREATE TABLE IF NOT EXISTS buspass ("
+                + "bus_id INT PRIMARY KEY,"
+                + "name VARCHAR(255),"
+                + "address VARCHAR(255),"
+                + "phone_number VARCHAR(255),"
+                + "pickup VARCHAR(255),"
+                + "droping VARCHAR(255))";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             Statement st = con.createStatement()) {
+
+            st.executeUpdate(query);
+            System.out.println("Table created successfully");
+        }
+    }
+
+    public void readData() throws Exception {
+        String query = "SELECT * FROM buspass";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(query)) {
+
+            while (rs.next()) {
+                System.out.println("bus_id : " + rs.getInt("bus_id"));
+                System.out.println("Name : " + rs.getString("name"));
+                System.out.println("address : " + rs.getString("address"));
+                System.out.println("Phone Number : " + rs.getString("phone_number"));
+                System.out.println("pickup point : " + rs.getString("pickup"));
+                System.out.println("drop point : " + rs.getString("droping"));
+                System.out.println("-------------------");
+            }
+        }
+    }
+    public void insertData(int bus_id,String name,String address,String phoneNumber,String pickup,String drop) throws Exception {
+       
+    
+        String query = "INSERT INTO buspass VALUES (?, ?, ?, ?, ?,?)";
+    
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+    
+            pst.setInt(1, bus_id);
+            pst.setString(2, name);
+            pst.setString(3, address);
+            pst.setString(4, phoneNumber);
+            pst.setString(5, pickup);
+            pst.setString(6, drop);
+    
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+    
+
+    public void updateData() throws Exception {
+        System.out.println("Enter Bus_id to update:");
+        int regNo = scanner.nextInt();
+        System.out.println("Enter new name:");
+        String name = scanner.next();
+        String query = "UPDATE buspass SET name = ? WHERE bus_id = ?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+
+            pst.setString(1, name);
+            pst.setInt(2, regNo);
+
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+
+    public void deleteData() throws Exception {
+        System.out.println("Enter bus_id to delete:");
+        int regNo = scanner.nextInt();
+        String query = "DELETE FROM buspass WHERE bus_id = ?";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement pst = con.prepareStatement(query)) {
+
+            pst.setInt(1, regNo);
+
+            int row = pst.executeUpdate();
+            System.out.println("Number of rows affected: " + row);
+        }
+    }
+
+}
